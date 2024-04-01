@@ -14,8 +14,10 @@ android {
         versionCode 1
         versionName "0.01"
 
+        //0.01,feat : Upload Origin
         //
-
+        //- 빈앱에 ML KIT 추가.
+        //- 기본 감지 화면 이미지 라벨로 변경.
 
 
 
