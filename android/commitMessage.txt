@@ -1,0 +1,5 @@
+<type>(<version>,<scope>): <subject>          -- 헤더
+<BLANK LINE>
+<body>                              -- 본문
+<BLANK LINE>
+<footer> 
