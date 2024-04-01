@@ -1,0 +1,25 @@
+<type>(<version>,<scope>): <subject>          -- 헤더
+<BLANK LINE>
+<body>                              -- 본문
+<BLANK LINE>
+<footer> 
+
+feat : 새로운 기능
+fix : 버그 수정
+docs : 문서 수정
+style : 코드 스타일 혹은 포맷 등에 관해서.. 코드의 변경X
+refactor : 코드 리팩토링
+test : 테스트 코드 추가 혹은 리팩토링.. 코드의 변경X
+chore : 그 외 자잘한 수정(패키지 매니저 구성, 빌드 작업 업데이트).. 코드의 변경X
+build : 빌드 관련 파일 수정
+ci : CI관련 설정 수정
+
+
+
+ex)
+0.01, fix: 싫어요 음수로 내려가는 오류 수정
+
+좋아요&싫어요 번갈아가며 클릭시 음수로 내려가는 오류 수정.
+좋아요는 이상 없음.
+
+Resolves: #13
