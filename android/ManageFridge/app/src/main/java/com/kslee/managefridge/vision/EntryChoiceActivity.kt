@@ -17,6 +17,7 @@
 package com.kslee.managefridge.vision
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -24,28 +25,30 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.widget.TextView
-import androidx.compose.foundation.layout.Column
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.kslee.managefridge.vision.kotlin.ChooserActivity
 import com.kslee.managefridge.R
 import com.kslee.managefridge.vision.kotlin.CameraXLivePreviewActivity
 import java.util.ArrayList
 
 class EntryChoiceActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
+  var dataMap = HashMap<String, MyData>()
+  var array = dataMap.keys.toTypedArray()
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_vision_entry_choice)
-
+    getDataFromIntent()
     findViewById<TextView>(R.id.kotlin_entry_point).setOnClickListener {
       val intent =
         Intent(
@@ -53,19 +56,39 @@ class EntryChoiceActivity : AppCompatActivity(), ActivityCompat.OnRequestPermiss
           com.kslee.managefridge.vision.kotlin.CameraXLivePreviewActivity::class.java
         )
       intent.putExtra(CameraXLivePreviewActivity.STATE_SELECTED_MODEL, CameraXLivePreviewActivity.IMAGE_LABELING)
-      startActivity(intent)
+//      startActivity(intent)
+      resultLauncher.launch(intent)
     }
 
     if (!allRuntimePermissionsGranted()) {
       getRuntimePermissions()
     }
+
+    importCompose()
+  }
+
+  private lateinit var resultLauncher: ActivityResultLauncher<Intent>
+
+  private fun getDataFromIntent(){
+    resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
+      if (result.resultCode == Activity.RESULT_OK){
+        dataMap = result.data?.getSerializableExtra(DATAMAP) as HashMap<String, MyData>
+        importCompose()
+      }
+    }
   }
 
   private fun importCompose() {
+    Log.d(TAG, "importCompose")
     val composeView = findViewById<ComposeView>(R.id.compose_view)
+    dataMap.put("1", MyData())
+    dataMap.put("2",MyData())
+    dataMap.put("3",MyData())
+    dataMap.put("4",MyData())
+    array = dataMap.keys.toTypedArray()
     composeView.setContent {
       LazyColumn(Modifier.fillMaxSize()) {
-        items(data) {
+        items(array.size) {
           ListItem(it)
         }
       }
@@ -74,14 +97,13 @@ class EntryChoiceActivity : AppCompatActivity(), ActivityCompat.OnRequestPermiss
 
   override fun onResume() {
     super.onResume()
-    importCompose()
+
   }
 
   @Composable
-  fun ListItem(data: MyData, modifier: Modifier = Modifier) {
+  fun ListItem(index: Int, modifier: Modifier = Modifier) {
     Row(modifier.fillMaxWidth()) {
-      Text(text = data.name)
-      Text(text = data.date)
+      dataMap.get(array.get(index))?.let { Text(text = it.name) }
     }
   }
 
@@ -127,9 +149,8 @@ class EntryChoiceActivity : AppCompatActivity(), ActivityCompat.OnRequestPermiss
 
   companion object {
     private const val TAG = "EntryChoiceActivity"
+    val DATAMAP = "DATAMAP"
     private const val PERMISSION_REQUESTS = 1
-    var data =  ArrayList<MyData>()
-
     private val REQUIRED_RUNTIME_PERMISSIONS =
       arrayOf(
         Manifest.permission.CAMERA,

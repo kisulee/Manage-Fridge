@@ -48,41 +48,48 @@
 
         <activity
             android:name=".vision.EntryChoiceActivity"
+            android:screenOrientation="portrait"
             android:exported="false"
             android:theme="@style/AppTheme">
         </activity>
 
         <activity
             android:name=".vision.kotlin.ChooserActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
         </activity>
 
         <activity
             android:name=".vision.kotlin.LivePreviewActivity"
+            android:screenOrientation="portrait"
             android:exported="false"
             android:theme="@style/AppTheme">
         </activity>
 
         <activity
             android:name=".vision.kotlin.CameraXLivePreviewActivity"
+            android:screenOrientation="portrait"
             android:exported="false"
             android:theme="@style/AppTheme">
         </activity>
 
         <activity
             android:name=".vision.kotlin.CameraXSourceDemoActivity"
+            android:screenOrientation="portrait"
             android:exported="false"
             android:theme="@style/AppTheme">
         </activity>
 
         <activity
             android:name=".vision.kotlin.StillImageActivity"
+            android:screenOrientation="portrait"
             android:exported="false"
             android:theme="@style/AppTheme">
         </activity>
 
         <activity
             android:name=".vision.preference.SettingsActivity"
+            android:screenOrientation="portrait"
             android:exported="false"/>
 
     </application>

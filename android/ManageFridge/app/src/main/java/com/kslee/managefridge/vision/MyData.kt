@@ -1,7 +1,9 @@
 package com.kslee.managefridge.vision
 
-class MyData {
-    var name: String = ""
+import java.io.Serializable
+
+class MyData : Serializable {
+    var name: String = "temp"
     var date: String = ""
     var amount: String = ""
 }

@@ -2,6 +2,10 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
 }
+//0.02, fix : Fix mainList refresh
+//
+//- 촬영 후 메인 화면 리스트 갱신 오류 수정.
+//- 세로 고정 적용.
 
 android {
     namespace 'com.kslee.managefridge'
@@ -12,15 +16,7 @@ android {
         minSdk 28
         targetSdk 34
         versionCode 1
-        versionName "0.01"
-
-        //0.01,feat : Upload Origin
-        //
-        //- 빈앱에 ML KIT 추가.
-        //- 기본 감지 화면 이미지 라벨로 변경.
-
-
-
+        versionName "0.02"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true

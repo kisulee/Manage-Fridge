@@ -25,6 +25,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.CompoundButton
 import android.widget.ImageView
 import android.widget.Spinner
@@ -63,7 +64,9 @@ import com.kslee.managefridge.vision.kotlin.segmenter.SegmenterProcessor
 import com.kslee.managefridge.vision.kotlin.textdetector.TextRecognitionProcessor
 import com.kslee.managefridge.R
 import com.kslee.managefridge.vision.CameraXViewModel
+import com.kslee.managefridge.vision.EntryChoiceActivity.Companion.DATAMAP
 import com.kslee.managefridge.vision.GraphicOverlay
+import com.kslee.managefridge.vision.MyData
 import com.kslee.managefridge.vision.VisionImageProcessor
 import com.kslee.managefridge.vision.preference.PreferenceUtils
 import com.kslee.managefridge.vision.preference.SettingsActivity
@@ -73,6 +76,7 @@ import com.kslee.managefridge.vision.preference.SettingsActivity
 @RequiresApi(VERSION_CODES.LOLLIPOP)
 class CameraXLivePreviewActivity :
     AppCompatActivity(), OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
+    var dataMap = HashMap<String, MyData>()
 
     private var previewView: PreviewView? = null
     private var graphicOverlay: GraphicOverlay? = null
@@ -156,6 +160,13 @@ class CameraXLivePreviewActivity :
                 SettingsActivity.LaunchSource.CAMERAX_LIVE_PREVIEW
             )
             startActivity(intent)
+        }
+        val okButton = findViewById<Button>(R.id.ok_btn)
+        okButton.setOnClickListener {
+            val intent = Intent(this@CameraXLivePreviewActivity, CameraXLivePreviewActivity::class.java)
+            intent.putExtra(DATAMAP, dataMap)
+            setResult(RESULT_OK, intent)
+            finish()
         }
     }
 

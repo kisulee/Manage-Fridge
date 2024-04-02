@@ -16,6 +16,7 @@
 
 package com.kslee.managefridge.vision.kotlin.labeldetector
 
+import android.app.Activity
 import android.content.Context
 import android.icu.text.SimpleDateFormat
 import android.util.Log
@@ -29,6 +30,7 @@ import com.google.mlkit.vision.label.ImageLabeling
 import com.kslee.managefridge.vision.EntryChoiceActivity
 import com.kslee.managefridge.vision.GraphicOverlay
 import com.kslee.managefridge.vision.MyData
+import com.kslee.managefridge.vision.kotlin.CameraXLivePreviewActivity
 import java.io.IOException
 import java.util.ArrayList
 import java.util.Date
@@ -38,6 +40,7 @@ class LabelDetectorProcessor(context: Context, options: ImageLabelerOptionsBase)
   VisionProcessorBase<List<ImageLabel>>(context) {
 
   private val imageLabeler: ImageLabeler = ImageLabeling.getClient(options)
+  private val context = context
 
   override fun stop() {
     super.stop()
@@ -64,6 +67,23 @@ class LabelDetectorProcessor(context: Context, options: ImageLabelerOptionsBase)
     Log.w(TAG, "Label detection failed.$e")
   }
 
+  private fun logExtrasForTesting(labels: List<ImageLabel>?) {
+    if (labels == null) {
+      Log.v(MANUAL_TESTING_LOG, "No labels detected")
+    } else {
+      for (label in labels) {
+        Log.v(
+          MANUAL_TESTING_LOG,
+          String.format("Label %s, confidence %f", label.text, label.confidence)
+        )
+        val myData = MyData()
+        myData.name = label.text
+        myData.date = SimpleDateFormat("yyyy.MM.dd hh:mm:ss").format(Date())
+        (context as CameraXLivePreviewActivity).dataMap.put(myData.name, myData)
+      }
+    }
+  }
+
   companion object {
     private const val TAG = "LabelDetectorProcessor"
 
@@ -79,7 +99,6 @@ class LabelDetectorProcessor(context: Context, options: ImageLabelerOptionsBase)
           val myData = MyData()
           myData.name = label.text
           myData.date = SimpleDateFormat("yyyy.MM.dd hh:mm:ss").format(Date())
-          EntryChoiceActivity.data.add(myData)
         }
       }
     }

@@ -41,21 +41,13 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier.height(60.dp).width(200.dp)
-    )
-}
-
-@Composable
 fun InitUi( modifier: Modifier = Modifier) {
     val activity = LocalContext.current as Activity
     Button(
         contentPadding = PaddingValues(12.dp),
         modifier = Modifier.wrapContentSize(),
         onClick = {
-//        activity.startActivity(Intent(activity, EntryChoiceActivity::class.java))
+        activity.startActivity(Intent(activity, EntryChoiceActivity::class.java))
     }) {
         Text(text = "다음")
     }
