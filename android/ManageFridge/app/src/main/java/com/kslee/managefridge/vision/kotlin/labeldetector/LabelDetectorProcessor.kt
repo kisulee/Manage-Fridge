@@ -16,7 +16,6 @@
 
 package com.kslee.managefridge.vision.kotlin.labeldetector
 
-import android.app.Activity
 import android.content.Context
 import android.icu.text.SimpleDateFormat
 import android.util.Log
@@ -27,80 +26,80 @@ import com.google.mlkit.vision.label.ImageLabel
 import com.google.mlkit.vision.label.ImageLabeler
 import com.google.mlkit.vision.label.ImageLabelerOptionsBase
 import com.google.mlkit.vision.label.ImageLabeling
-import com.kslee.managefridge.vision.EntryChoiceActivity
 import com.kslee.managefridge.vision.GraphicOverlay
 import com.kslee.managefridge.vision.MyData
 import com.kslee.managefridge.vision.kotlin.CameraXLivePreviewActivity
 import java.io.IOException
-import java.util.ArrayList
 import java.util.Date
 
 /** Custom InputImage Classifier   */
 class LabelDetectorProcessor(context: Context, options: ImageLabelerOptionsBase) :
-  VisionProcessorBase<List<ImageLabel>>(context) {
+    VisionProcessorBase<List<ImageLabel>>(context) {
 
-  private val imageLabeler: ImageLabeler = ImageLabeling.getClient(options)
-  private val context = context
+    private val imageLabeler: ImageLabeler = ImageLabeling.getClient(options)
+    private val context = context
 
-  override fun stop() {
-    super.stop()
-    try {
-      imageLabeler.close()
-    } catch (e: IOException) {
-      Log.e(
-        TAG,
-        "Exception thrown while trying to close ImageLabelerClient: $e"
-      )
+    override fun stop() {
+        super.stop()
+        try {
+            imageLabeler.close()
+        } catch (e: IOException) {
+            Log.e(
+                TAG,
+                "Exception thrown while trying to close ImageLabelerClient: $e"
+            )
+        }
     }
-  }
 
-  override fun detectInImage(image: InputImage): Task<List<ImageLabel>> {
-    return imageLabeler.process(image)
-  }
+    override fun detectInImage(image: InputImage): Task<List<ImageLabel>> {
+        return imageLabeler.process(image)
+    }
 
-  override fun onSuccess(labels: List<ImageLabel>, graphicOverlay: GraphicOverlay) {
+    override fun onSuccess(labels: List<ImageLabel>, graphicOverlay: GraphicOverlay) {
 //    graphicOverlay.add(LabelGraphic(graphicOverlay, labels))
-    logExtrasForTesting(labels)
-  }
-
-  override fun onFailure(e: Exception) {
-    Log.w(TAG, "Label detection failed.$e")
-  }
-
-  private fun logExtrasForTesting(labels: List<ImageLabel>?) {
-    if (labels == null) {
-      Log.v(MANUAL_TESTING_LOG, "No labels detected")
-    } else {
-      for (label in labels) {
-        Log.v(
-          MANUAL_TESTING_LOG,
-          String.format("Label %s, confidence %f", label.text, label.confidence)
-        )
-        val myData = MyData()
-        myData.name = label.text
-        myData.date = SimpleDateFormat("yyyy.MM.dd hh:mm:ss").format(Date())
-        (context as CameraXLivePreviewActivity).dataMap.put(myData.name, myData)
-      }
+        logExtrasForTesting(labels)
     }
-  }
 
-  companion object {
-    private const val TAG = "LabelDetectorProcessor"
+    override fun onFailure(e: Exception) {
+        Log.w(TAG, "Label detection failed.$e")
+    }
 
     private fun logExtrasForTesting(labels: List<ImageLabel>?) {
-      if (labels == null) {
-        Log.v(MANUAL_TESTING_LOG, "No labels detected")
-      } else {
-        for (label in labels) {
-          Log.v(
-            MANUAL_TESTING_LOG,
-            String.format("Label %s, confidence %f", label.text, label.confidence)
-          )
-          val myData = MyData()
-          myData.name = label.text
-          myData.date = SimpleDateFormat("yyyy.MM.dd hh:mm:ss").format(Date())
+        if (labels == null) {
+            Log.v(MANUAL_TESTING_LOG, "No labels detected")
+        } else {
+            for (label in labels) {
+                Log.v(
+                    MANUAL_TESTING_LOG,
+                    String.format("Label %s, confidence %f", label.text, label.confidence)
+                )
+                if (label.confidence > CONFIDENCE_MIN) {
+                    val myData = MyData()
+                    myData.name = label.text
+                    myData.date = SimpleDateFormat("yyyy.MM.dd hh:mm:ss").format(Date())
+                    (context as CameraXLivePreviewActivity).dataMap.put(myData.name, myData)
+                }
+            }
         }
-      }
     }
-  }
+
+    companion object {
+        private const val TAG = "LabelDetectorProcessor"
+
+        private fun logExtrasForTesting(labels: List<ImageLabel>?) {
+            if (labels == null) {
+                Log.v(MANUAL_TESTING_LOG, "No labels detected")
+            } else {
+                for (label in labels) {
+                    Log.v(
+                        MANUAL_TESTING_LOG,
+                        String.format("Label %s, confidence %f", label.text, label.confidence)
+                    )
+                    val myData = MyData()
+                    myData.name = label.text
+                    myData.date = SimpleDateFormat("yyyy.MM.dd hh:mm:ss").format(Date())
+                }
+            }
+        }
+    }
 }

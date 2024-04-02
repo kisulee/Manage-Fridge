@@ -5,6 +5,8 @@ plugins {
 //0.03, feat : save data
 //
 //- 데이터 저장 후 불러오기 추가.
+//- 신뢰도 최소값 설정 추가
+
 
 android {
     namespace 'com.kslee.managefridge'
