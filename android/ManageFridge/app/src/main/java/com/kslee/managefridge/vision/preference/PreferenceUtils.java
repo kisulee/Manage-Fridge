@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.os.Build.VERSION_CODES;
 import android.preference.PreferenceManager;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.StringRes;
@@ -28,6 +29,8 @@ import androidx.camera.core.CameraSelector;
 
 import com.google.android.gms.common.images.Size;
 import com.google.common.base.Preconditions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.mlkit.common.model.LocalModel;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 import com.google.mlkit.vision.facemesh.FaceMeshDetectorOptions;
@@ -39,6 +42,9 @@ import com.google.mlkit.vision.pose.accurate.AccuratePoseDetectorOptions;
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions;
 import com.kslee.managefridge.R;
 import com.kslee.managefridge.vision.CameraSource;
+import com.kslee.managefridge.vision.MyData;
+
+import java.util.HashMap;
 
 /** Utility class to retrieve shared preferences. */
 public class PreferenceUtils {
@@ -50,6 +56,29 @@ public class PreferenceUtils {
         .edit()
         .putString(context.getString(prefKeyId), value)
         .apply();
+  }
+
+  public static void saveHashMap(Context context, @NonNull String key,  @NonNull HashMap<String, MyData> hashMap) {
+    PreferenceManager.getDefaultSharedPreferences(context)
+        .edit()
+        .putString(key, new Gson().toJson(hashMap).toString())
+        .apply();
+  }
+  public static void saveString(Context context, String keyString, @NonNull String value) {
+
+    new Gson().fromJson("", new TypeToken<HashMap<String, MyData>>(){}.getType());
+    PreferenceManager.getDefaultSharedPreferences(context)
+        .edit()
+        .putString(keyString, value)
+        .apply();
+  }
+  public static String getSavedString(Context context, String keyString, @NonNull String defaultValue) {
+    return PreferenceManager.getDefaultSharedPreferences(context)
+        .getString(keyString, defaultValue);
+  }
+  public static HashMap<String, MyData> getSavedHashMap(Context context, String keyString) {
+    return  new Gson().fromJson(PreferenceManager.getDefaultSharedPreferences(context)
+            .getString(keyString, new HashMap<String, MyData>().toString()), new TypeToken<HashMap<String, MyData>>(){}.getType());
   }
 
   @Nullable
