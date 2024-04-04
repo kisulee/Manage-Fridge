@@ -80,6 +80,7 @@ class LabelDetectorProcessor(context: Context, options: ImageLabelerOptionsBase)
                     (context as CameraXLivePreviewActivity).dataMap.put(myData.name, myData)
                 }
             }
+            (context as CameraXLivePreviewActivity).array = context.dataMap.keys.toTypedArray()
         }
     }
 

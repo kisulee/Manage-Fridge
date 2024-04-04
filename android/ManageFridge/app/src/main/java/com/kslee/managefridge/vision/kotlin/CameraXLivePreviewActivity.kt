@@ -16,8 +16,8 @@
 
 package com.kslee.managefridge.vision.kotlin
 
+import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
@@ -31,7 +31,6 @@ import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.Toast
 import android.widget.ToggleButton
-import androidx.annotation.RequiresApi
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraInfoUnavailableException
 import androidx.camera.core.CameraSelector
@@ -40,6 +39,33 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -73,10 +99,10 @@ import com.kslee.managefridge.vision.preference.SettingsActivity
 
 /** Live preview demo app for ML Kit APIs using CameraX. */
 @KeepName
-@RequiresApi(VERSION_CODES.LOLLIPOP)
 class CameraXLivePreviewActivity :
     AppCompatActivity(), OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
     var dataMap = HashMap<String, MyData>()
+    var array = dataMap.toList()
 
     private var previewView: PreviewView? = null
     private var graphicOverlay: GraphicOverlay? = null
@@ -97,8 +123,8 @@ class CameraXLivePreviewActivity :
             selectedModel = savedInstanceState.getString(STATE_SELECTED_MODEL, OBJECT_DETECTION)
         }
 
-        if(!intent.extras?.getString(STATE_SELECTED_MODEL,"")?.isEmpty()!!){
-            selectedModel = intent.extras?.getString(STATE_SELECTED_MODEL,OBJECT_DETECTION)!!
+        if (!intent.extras?.getString(STATE_SELECTED_MODEL, "")?.isEmpty()!!) {
+            selectedModel = intent.extras?.getString(STATE_SELECTED_MODEL, OBJECT_DETECTION)!!
         }
 
         Log.d(TAG, "selectedModel = " + selectedModel)
@@ -163,10 +189,104 @@ class CameraXLivePreviewActivity :
         }
         val okButton = findViewById<Button>(R.id.ok_btn)
         okButton.setOnClickListener {
-            val intent = Intent(this@CameraXLivePreviewActivity, CameraXLivePreviewActivity::class.java)
+            val intent =
+                Intent(this@CameraXLivePreviewActivity, CameraXLivePreviewActivity::class.java)
             intent.putExtra(DATAMAP, dataMap)
             setResult(RESULT_OK, intent)
             finish()
+        }
+        // compose 추가
+        val composeView = findViewById<ComposeView>(R.id.compose_bottom_sheet)
+        composeView.setContent {
+            importCompose()
+        }
+    }
+
+    @SuppressLint("UnrememberedMutableState")
+    @Composable
+    private fun importCompose() {
+        Log.d(TAG, "importCompose")
+        val composeView = findViewById<ComposeView>(R.id.compose_view)
+        array = dataMap.toList()
+        var mutableList = mutableStateListOf<Pair<String, MyData>>()
+
+        composeView.setContent {
+            LazyColumn(Modifier.fillMaxSize()) {
+                items(mutableList) {
+                    ListItem(it)
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun ListItem(item: Pair<String, MyData>, modifier: Modifier = Modifier) {
+        Row(
+            modifier
+                .fillMaxWidth()
+                .shadow(elevation = 8.dp)
+                .padding(6.dp)
+        ) {
+            Text(text = item.first)
+            Text(text = item.second.date)
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun setBottomSheet() {
+        val sheetState = rememberModalBottomSheetState()
+        val scope = rememberCoroutineScope()
+        var showBottomSheet by remember { mutableStateOf(false) }
+        Scaffold(
+            floatingActionButton = {
+                ExtendedFloatingActionButton(
+                    text = { Text("Show bottom sheet") },
+                    icon = { Icon(Icons.Filled.Add, contentDescription = "") },
+                    onClick = {
+                        showBottomSheet = true
+                    }
+                )
+            }
+        ) { contentPadding ->
+            // Screen content
+            Box(modifier = Modifier.padding(contentPadding)) { 
+            Text(text = "contents Box")
+            }
+
+            if (showBottomSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        showBottomSheet = false
+                    }
+                    ,
+                    sheetState = sheetState
+                ) {
+                    // Sheet content
+                    Text("test text!!!!")
+                    Text("test text!!!!")
+                    Text("test text!!!!")
+                    Text("test text!!!!")
+                    Text("test text!!!!")
+                    Text("test text!!!!")
+                    Text("test text!!!!")
+                    Text("test text!!!!")
+                    Text("test text!!!!")
+                    Text("test text!!!!")
+                    Text("test text!!!!")
+                    Text("test text!!!!")
+//                    Button(onClick = {
+//                        scope.launch { sheetState.hide() }.invokeOnCompletion {
+//                            if (!sheetState.isVisible) {
+//                                showBottomSheet = false
+//                            }
+//                        }
+//                    })
+//                    {
+//                        Text("Hide bottom sheet")
+//                    }
+                }
+            }
         }
     }
 
