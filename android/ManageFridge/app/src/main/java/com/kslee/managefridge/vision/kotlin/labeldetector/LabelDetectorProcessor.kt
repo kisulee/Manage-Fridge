@@ -29,6 +29,7 @@ import com.google.mlkit.vision.label.ImageLabeling
 import com.kslee.managefridge.vision.GraphicOverlay
 import com.kslee.managefridge.vision.MyData
 import com.kslee.managefridge.vision.kotlin.CameraXLivePreviewActivity
+import com.kslee.managefridge.vision.kotlin.CameraXLivePreviewActivity.Companion.dataMap
 import java.io.IOException
 import java.util.Date
 
@@ -68,6 +69,8 @@ class LabelDetectorProcessor(context: Context, options: ImageLabelerOptionsBase)
         if (labels == null) {
             Log.v(MANUAL_TESTING_LOG, "No labels detected")
         } else {
+            var startDataSize = dataMap.size
+            var endDataSize: Int? = null
             for (label in labels) {
                 Log.v(
                     MANUAL_TESTING_LOG,
@@ -77,10 +80,12 @@ class LabelDetectorProcessor(context: Context, options: ImageLabelerOptionsBase)
                     val myData = MyData()
                     myData.name = label.text
                     myData.date = SimpleDateFormat("yyyy.MM.dd hh:mm:ss").format(Date())
-                    (context as CameraXLivePreviewActivity).dataMap.put(myData.name, myData)
+                    dataMap.put(myData.name, myData)
                 }
+                endDataSize = dataMap.size
+                if (startDataSize != endDataSize)
+                    (context as CameraXLivePreviewActivity).initCompose()
             }
-            (context as CameraXLivePreviewActivity).array = context.dataMap.toList()
         }
     }
 

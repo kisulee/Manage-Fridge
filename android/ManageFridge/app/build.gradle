@@ -2,9 +2,9 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
 }
-//0.04, feat : add bottomSheet
+//0.05, feat : fix bottomSheet
 //
-//- 카메라 화면 리스트 추가중.
+//- 리스트에 항목 갱신 기능 추가.
 
 
 android {
@@ -16,7 +16,7 @@ android {
         minSdk 28
         targetSdk 34
         versionCode 1
-        versionName "0.03"
+        versionName "0.05"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true

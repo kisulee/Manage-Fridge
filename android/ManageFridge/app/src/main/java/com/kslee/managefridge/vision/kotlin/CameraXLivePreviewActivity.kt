@@ -39,32 +39,44 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -101,8 +113,6 @@ import com.kslee.managefridge.vision.preference.SettingsActivity
 @KeepName
 class CameraXLivePreviewActivity :
     AppCompatActivity(), OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
-    var dataMap = HashMap<String, MyData>()
-    var array = dataMap.toList()
 
     private var previewView: PreviewView? = null
     private var graphicOverlay: GraphicOverlay? = null
@@ -196,25 +206,53 @@ class CameraXLivePreviewActivity :
             finish()
         }
         // compose 추가
+//        val data = MyData()
+//        data.date = "2024.04.08"
+//        dataMap.put("1", data)
+//        dataMap.put("2", data)
+//        dataMap.put("3", data)
+//        dataMap.put("4", data)
+//        dataMap.put("5", data)
+//        dataMap.put("6", data)
+//        dataMap.put("7", data)
+//        dataMap.put("8", data)
+//        dataMap.put("9", data)
+//        dataMap.put("10", data)
+//        dataMap.put("11", data)
+//        dataMap.put("12", data)
+//        dataMap.put("13", data)
+        initCompose()
+    }
+
+    fun initCompose() {
         val composeView = findViewById<ComposeView>(R.id.compose_bottom_sheet)
         composeView.setContent {
-            importCompose()
+            InitList()
         }
+    }
+
+    @Composable
+    fun InitList() {
+        Log.e(TAG, "InitList called")
+        LazyColumn {
+            items(dataMap.toList()) {
+                ListItem(it)
+            }
+        }
+    }
+
+
+    private fun loadItems(): List<Pair<String, MyData>> {
+        return dataMap.toList()
     }
 
     @SuppressLint("UnrememberedMutableState")
     @Composable
-    private fun importCompose() {
-        Log.d(TAG, "importCompose")
-        val composeView = findViewById<ComposeView>(R.id.compose_view)
-        array = dataMap.toList()
-        var mutableList = mutableStateListOf<Pair<String, MyData>>()
+    private fun ImportCompose(list: SnapshotStateList<Pair<String, MyData>>) {
 
-        composeView.setContent {
-            LazyColumn(Modifier.fillMaxSize()) {
-                items(mutableList) {
-                    ListItem(it)
-                }
+        LazyColumn(Modifier.fillMaxSize()) {
+            items(list) {
+                ListItem(it)
             }
         }
     }
@@ -222,13 +260,19 @@ class CameraXLivePreviewActivity :
     @Composable
     fun ListItem(item: Pair<String, MyData>, modifier: Modifier = Modifier) {
         Row(
-            modifier
+            horizontalArrangement = Arrangement.End,
+            modifier = modifier
                 .fillMaxWidth()
-                .shadow(elevation = 8.dp)
+                .shadow(elevation = 3.dp)
                 .padding(6.dp)
+                .motionEventSpy {
+                    Log.e(TAG, "action event : " + it.action)
+                }
         ) {
-            Text(text = item.first)
-            Text(text = item.second.date)
+            Column {
+                Text(text = item.first, fontWeight = Bold, modifier = Modifier.size(10.dp))
+                Text(text = item.second.date)
+            }
         }
     }
 
@@ -250,16 +294,15 @@ class CameraXLivePreviewActivity :
             }
         ) { contentPadding ->
             // Screen content
-            Box(modifier = Modifier.padding(contentPadding)) { 
-            Text(text = "contents Box")
+            Box(modifier = Modifier.padding(contentPadding)) {
+                Text(text = "contents Box")
             }
 
             if (showBottomSheet) {
                 ModalBottomSheet(
                     onDismissRequest = {
                         showBottomSheet = false
-                    }
-                    ,
+                    },
                     sheetState = sheetState
                 ) {
                     // Sheet content
@@ -632,5 +675,6 @@ class CameraXLivePreviewActivity :
         const val FACE_MESH_DETECTION = "Face Mesh Detection (Beta)"
 
         const val STATE_SELECTED_MODEL = "selected_model"
+        var dataMap = HashMap<String, MyData>()
     }
 }

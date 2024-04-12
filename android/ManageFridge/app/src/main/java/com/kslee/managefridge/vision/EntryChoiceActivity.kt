@@ -52,7 +52,6 @@ import com.kslee.managefridge.vision.preference.PreferenceUtils.saveHashMap
 
 class EntryChoiceActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
     var dataMap = HashMap<String, MyData>()
-    var array = dataMap.toList()
     val SAVED_DATA = "SAVED_DATA"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -104,10 +103,9 @@ class EntryChoiceActivity : AppCompatActivity(), ActivityCompat.OnRequestPermiss
     private fun importCompose() {
         Log.d(TAG, "importCompose")
         val composeView = findViewById<ComposeView>(R.id.compose_view)
-        array = dataMap.toList()
         composeView.setContent {
             LazyColumn(Modifier.fillMaxSize()) {
-                items(array) {
+                items(dataMap.toList()) {
                     ListItem(it)
                 }
             }
