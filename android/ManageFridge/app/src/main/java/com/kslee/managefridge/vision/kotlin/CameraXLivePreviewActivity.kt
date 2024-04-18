@@ -16,7 +16,6 @@
 
 package com.kslee.managefridge.vision.kotlin
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -39,43 +38,21 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -102,7 +79,7 @@ import com.kslee.managefridge.vision.kotlin.segmenter.SegmenterProcessor
 import com.kslee.managefridge.vision.kotlin.textdetector.TextRecognitionProcessor
 import com.kslee.managefridge.R
 import com.kslee.managefridge.vision.CameraXViewModel
-import com.kslee.managefridge.vision.EntryChoiceActivity.Companion.DATAMAP
+import com.kslee.managefridge.vision.EntryChoiceActivity.Companion.DATA_MAP
 import com.kslee.managefridge.vision.GraphicOverlay
 import com.kslee.managefridge.vision.MyData
 import com.kslee.managefridge.vision.VisionImageProcessor
@@ -201,7 +178,7 @@ class CameraXLivePreviewActivity :
         okButton.setOnClickListener {
             val intent =
                 Intent(this@CameraXLivePreviewActivity, CameraXLivePreviewActivity::class.java)
-            intent.putExtra(DATAMAP, dataMap)
+            intent.putExtra(DATA_MAP, dataMap)
             setResult(RESULT_OK, intent)
             finish()
         }
@@ -246,89 +223,24 @@ class CameraXLivePreviewActivity :
         return dataMap.toList()
     }
 
-    @SuppressLint("UnrememberedMutableState")
-    @Composable
-    private fun ImportCompose(list: SnapshotStateList<Pair<String, MyData>>) {
 
-        LazyColumn(Modifier.fillMaxSize()) {
-            items(list) {
-                ListItem(it)
-            }
-        }
-    }
-
+    @OptIn(ExperimentalComposeUiApi::class)
     @Composable
     fun ListItem(item: Pair<String, MyData>, modifier: Modifier = Modifier) {
-        Row(
-            horizontalArrangement = Arrangement.End,
+        Surface(
             modifier = modifier
                 .fillMaxWidth()
-                .shadow(elevation = 3.dp)
                 .padding(6.dp)
                 .motionEventSpy {
                     Log.e(TAG, "action event : " + it.action)
                 }
+            ,  shape = CircleShape,
+            border = BorderStroke(width = 1.dp, color = Color.Black)
+            , shadowElevation = 5.dp,
         ) {
             Column {
-                Text(text = item.first, fontWeight = Bold, modifier = Modifier.size(10.dp))
+                Text(text = item.first, fontWeight = Bold)
                 Text(text = item.second.date)
-            }
-        }
-    }
-
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    private fun setBottomSheet() {
-        val sheetState = rememberModalBottomSheetState()
-        val scope = rememberCoroutineScope()
-        var showBottomSheet by remember { mutableStateOf(false) }
-        Scaffold(
-            floatingActionButton = {
-                ExtendedFloatingActionButton(
-                    text = { Text("Show bottom sheet") },
-                    icon = { Icon(Icons.Filled.Add, contentDescription = "") },
-                    onClick = {
-                        showBottomSheet = true
-                    }
-                )
-            }
-        ) { contentPadding ->
-            // Screen content
-            Box(modifier = Modifier.padding(contentPadding)) {
-                Text(text = "contents Box")
-            }
-
-            if (showBottomSheet) {
-                ModalBottomSheet(
-                    onDismissRequest = {
-                        showBottomSheet = false
-                    },
-                    sheetState = sheetState
-                ) {
-                    // Sheet content
-                    Text("test text!!!!")
-                    Text("test text!!!!")
-                    Text("test text!!!!")
-                    Text("test text!!!!")
-                    Text("test text!!!!")
-                    Text("test text!!!!")
-                    Text("test text!!!!")
-                    Text("test text!!!!")
-                    Text("test text!!!!")
-                    Text("test text!!!!")
-                    Text("test text!!!!")
-                    Text("test text!!!!")
-//                    Button(onClick = {
-//                        scope.launch { sheetState.hide() }.invokeOnCompletion {
-//                            if (!sheetState.isVisible) {
-//                                showBottomSheet = false
-//                            }
-//                        }
-//                    })
-//                    {
-//                        Text("Hide bottom sheet")
-//                    }
-                }
             }
         }
     }

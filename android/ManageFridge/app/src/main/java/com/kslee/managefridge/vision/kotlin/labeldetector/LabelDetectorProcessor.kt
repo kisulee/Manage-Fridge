@@ -77,9 +77,8 @@ class LabelDetectorProcessor(context: Context, options: ImageLabelerOptionsBase)
                     String.format("Label %s, confidence %f", label.text, label.confidence)
                 )
                 if (label.confidence > CONFIDENCE_MIN) {
-                    val myData = MyData()
-                    myData.name = label.text
-                    myData.date = SimpleDateFormat("yyyy.MM.dd hh:mm:ss").format(Date())
+                    val myData = MyData(name = label.text,
+                        date = SimpleDateFormat("yyyy.MM.dd hh:mm:ss").format(Date()), amount = "")
                     dataMap.put(myData.name, myData)
                 }
                 endDataSize = dataMap.size
@@ -101,9 +100,6 @@ class LabelDetectorProcessor(context: Context, options: ImageLabelerOptionsBase)
                         MANUAL_TESTING_LOG,
                         String.format("Label %s, confidence %f", label.text, label.confidence)
                     )
-                    val myData = MyData()
-                    myData.name = label.text
-                    myData.date = SimpleDateFormat("yyyy.MM.dd hh:mm:ss").format(Date())
                 }
             }
         }

@@ -2,9 +2,9 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
 }
-//0.05, feat : fix bottomSheet
+//0.05, feat : add, remove mainList item
 //
-//- 리스트에 항목 갱신 기능 추가.
+//- 메인 리스트 추가 삭제 기능 추가.
 
 
 android {
@@ -127,6 +127,7 @@ dependencies {
     implementation 'com.google.guava:guava:27.1-android'
     implementation libs.androidx.coordinatorlayout
     implementation libs.material
+    implementation libs.androidx.compose.material
     // Assertions
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
 
